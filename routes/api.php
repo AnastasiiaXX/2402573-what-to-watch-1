@@ -21,7 +21,7 @@ Route::name('user.')->middleware('auth:sanctum')->group(function () {
     Route::delete('/films/{id}/favourite', [FavoritesController::class, 'destroy']);
 });
 
-Route::name('moderator.')->middleware('auth:sanctum')->group(function () {
+Route::name('moderator.')->middleware(['auth:sanctum', 'role:isModerator'])->group(function () {
     Route::patch('/genres/{genre}', [GenresController::class, 'update']);
     Route::post('/promo/{id}', [FilmsController::class, 'storePromo']);
     Route::post('/films', [FilmsController::class, 'store']);
