@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
