@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Film extends Model
 {
+    use HasFactory;
+
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -31,6 +35,10 @@ class Film extends Model
         'is_promo'
     ];
 
+    protected $casts = [
+        'starring' => 'array',
+    ];
+
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
@@ -44,5 +52,15 @@ class Film extends Model
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class);
+    }
+
+    public function calculateRating(): ?float
+    {
+        return $this->comments()->avg('rating');
+    }
+
+    public function getScoresCount(): int
+    {
+        return $this->comments()->count();
     }
 }
