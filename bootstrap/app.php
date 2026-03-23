@@ -1,8 +1,12 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,7 +19,22 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => App\Http\Middleware\EnsureUserHasRole::class
         ]);
+        $middleware->redirectGuestsTo(fn() => response()->json([
+            'message' => 'Запрос требует аутентификации.'
+        ], 401));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            return response()->json(['message' => 'Запрос требует аутентификации.'], 401);
+        });
+
+        $exceptions->render(function (AuthorizationException $e, Request $request) {
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
+        });
+
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            return response()->json(['message' => 'Переданные данные не корректны.',
+                'errors' => $e->errors()], 422);
+        });
+
     })->create();

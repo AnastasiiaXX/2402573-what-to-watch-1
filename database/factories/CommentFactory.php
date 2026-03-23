@@ -21,6 +21,7 @@ class CommentFactory extends Factory
             'comment' => fake()->paragraph(),
             'rating' => fake()->numberBetween(1, 10),
             'film_id' => Film::factory(),
+            'created_at' => fake()->dateTime(),
         ];
     }
 }
