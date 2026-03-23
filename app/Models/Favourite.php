@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Favourite extends Model
 {
@@ -15,4 +16,5 @@ class Favourite extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Comment extends Model
 {
     use HasFactory;
-    public $timestamps = false;
+    const UPDATED_AT = null;
     /**
      * The attributes that are mass assignable.
      *
@@ -18,8 +19,10 @@ class Comment extends Model
      */
     protected $fillable = [
         'comment',
-        'rating'
+        'rating',
     ];
+
+    protected $appends = ['author_name'];
 
     public function user(): BelongsTo
     {
@@ -41,8 +44,10 @@ class Comment extends Model
         return $this->hasMany(Comment::class, 'parent_id');
     }
 
-    public function authorName(): string
+    public function authorName(): Attribute
     {
-        return $this->user->name ?? 'guest';
+        return Attribute::make(
+            get: fn () => $this->user->name ?? 'guest'
+        );
     }
 }
