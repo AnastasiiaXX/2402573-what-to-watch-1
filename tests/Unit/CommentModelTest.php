@@ -18,13 +18,13 @@ class CommentModelTest extends TestCase
         $user = User::factory()->create();
         $comment = Comment::factory()->create(['user_id' => $user->id]);
 
-        $this->assertEquals($user->name, $comment->authorName());
+        $this->assertEquals($user->name, $comment->author_name);
     }
 
     public function test_anonymous_comment_returns_guest(): void
     {
         $comment = Comment::factory()->create(['user_id' => null]);
 
-        $this->assertEquals('guest', $comment->authorName());
+        $this->assertEquals('guest', $comment->author_name);
     }
 }

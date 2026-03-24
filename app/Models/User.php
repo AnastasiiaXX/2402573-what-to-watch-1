@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
@@ -69,12 +70,19 @@ class User extends Authenticatable
         return $this->hasMany(Favourite::class);
     }
 
-    public function isModerator(): bool
+    public function favoriteFilms(): BelongsToMany
     {
-        return $this->roles->name === 'moderator';
+        return $this->belongsToMany(Film::class, 'favourites')
+            ->withPivot('created_at')
+            ->orderByPivot('created_at', 'desc');
     }
 
-    public function roles(): BelongsTo
+    public function isModerator(): bool
+    {
+        return $this->role->name === 'moderator';
+    }
+
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }

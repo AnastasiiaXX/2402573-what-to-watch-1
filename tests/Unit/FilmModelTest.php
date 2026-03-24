@@ -19,6 +19,6 @@ class FilmModelTest extends TestCase
         Comment::factory()->create(['film_id' => $film->id, 'rating' => 7]);
         Comment::factory()->create(['film_id' => $film->id, 'rating' => 8]);
 
-        $this->assertEquals(7.5, $film->calculateRating());
+        $this->assertEquals(7.5, $film->rating);
     }
 }
