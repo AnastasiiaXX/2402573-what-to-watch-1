@@ -20,7 +20,7 @@ class FilmFactory extends Factory
             'name' => fake()->sentence(),
             'status' => 'ready',
             'poster_image' => fake()->imageUrl(),
-            'preview_image'=> fake()->imageUrl(),
+            'preview_image' => fake()->imageUrl(),
             'background_image' => fake()->imageUrl(),
             'background_color' => fake()->hexColor(),
             'description' => fake()->paragraph(),

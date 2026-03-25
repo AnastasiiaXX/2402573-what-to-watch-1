@@ -14,6 +14,7 @@ use Tests\TestCase;
 class FavouriteTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test to get films added to favourites
      */

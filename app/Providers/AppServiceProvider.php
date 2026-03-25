@@ -4,8 +4,14 @@ namespace App\Providers;
 
 use App\Models\Comment;
 use App\Models\User;
+use App\Services\MovieService\MovieRepository;
+use App\Services\MovieService\MovieRepositoryInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(MovieRepositoryInterface::class, MovieRepository::class);
+        $this->app->bind(ClientInterface::class, Client::class);
+        $this->app->bind(RequestFactoryInterface::class, HttpFactory::class);
     }
 
     /**

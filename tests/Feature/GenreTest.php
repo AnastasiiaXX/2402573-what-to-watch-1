@@ -14,6 +14,7 @@ use Tests\TestCase;
 class GenreTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test getting list of genres
      */

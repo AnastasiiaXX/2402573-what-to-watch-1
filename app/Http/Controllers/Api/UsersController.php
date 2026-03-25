@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    public function show() {
+    public function show()
+    {
         return new SuccessResponse([], 200);
     }
 
-    public function update() {
+    public function update()
+    {
         return new SuccessResponse([], 200);
     }
 }

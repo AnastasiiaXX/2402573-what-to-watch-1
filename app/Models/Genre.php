@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Genre extends Model
 {
     use HasFactory;
+
     public $timestamps = false;
     /**
      * The attributes that are mass assignable.
