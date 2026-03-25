@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\PaginateResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\ErrorResponse;
+use App\Jobs\UpdateFilmJob;
 use App\Models\Film;
 use App\Models\Genre;
 use Illuminate\Http\Request;
@@ -66,6 +66,7 @@ class FilmsController extends Controller
     {
         $validated = $request->validate(['imdb_id' => ['required', 'string', 'unique:films', 'regex:/^tt\d+$/']]);
         $newFilm = Film::create([...$validated, 'status' => 'pending']);
+        UpdatefilmJob::dispatch($validated['imdb_id']);
         return new SuccessResponse($newFilm, 201);
     }
 
