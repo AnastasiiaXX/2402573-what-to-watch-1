@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
-
 class CommentsController extends Controller
 {
     /**
@@ -58,8 +57,7 @@ class CommentsController extends Controller
      */
     public function update(Request $request, Comment $comment): SuccessResponse|ErrorResponse
     {
-        if (Gate::allows('comment-update', $comment))
-        {
+        if (Gate::allows('comment-update', $comment)) {
             $validated = $request->validate([
                 'comment' => ['required', 'string', 'min:50', 'max:400'],
                 'rating' => ['integer', 'min:1', 'max:10']
@@ -80,8 +78,7 @@ class CommentsController extends Controller
      */
     public function destroy(Comment $comment): SuccessResponse|ErrorResponse
     {
-        if (Gate::allows('comment-delete', $comment))
-        {
+        if (Gate::allows('comment-delete', $comment)) {
             $comment->delete();
             return new SuccessResponse([], 200);
         } else {

@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Http\Responses;
 
-use \Symfony\Component\HttpFoundation\Response;
-class SuccessResponse extends BaseResponse {
+use Symfony\Component\HttpFoundation\Response;
+
+class SuccessResponse extends BaseResponse
+{
     public int $responseCode;
     public mixed $data;
 

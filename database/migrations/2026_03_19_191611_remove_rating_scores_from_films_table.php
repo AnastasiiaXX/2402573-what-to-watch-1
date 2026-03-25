@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('films', function (Blueprint $table) {
             $table->dropColumn(['rating', 'scores_count']);
-
         });
     }
 

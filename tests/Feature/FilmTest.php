@@ -16,6 +16,7 @@ use Tests\TestCase;
 class FilmTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      *  Test getting list of films
      */
@@ -74,7 +75,7 @@ class FilmTest extends TestCase
 
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
-        $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id'=> 'tt45678']);
+        $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id' => 'tt45678']);
 
         $response->assertStatus(201);
         $response->assertJsonStructure(['data' => ['id', 'imdb_id', 'status']]);
@@ -93,7 +94,7 @@ class FilmTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeaders(['Accept' => 'application/json'])
-            ->post('/api/films', ['imdb_id'=> 'tt45678']);
+            ->post('/api/films', ['imdb_id' => 'tt45678']);
 
         $response->assertJson(['message' => 'This action is unauthorized.']);
         $response->assertStatus(403);
@@ -109,7 +110,7 @@ class FilmTest extends TestCase
 
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
-        $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id'=> 1]);
+        $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id' => 1]);
 
         $response->assertJsonValidationErrors(['imdb_id']);
         $response->assertJson(['message' => 'Переданные данные не корректны.']);
@@ -128,8 +129,10 @@ class FilmTest extends TestCase
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
-        $response = $this->actingAs($moderator)->patch("/api/films/{$film->id}",
-            ['imdb_id'=> 'tt45678', 'status'=> 'ready', 'name' => 'film']);
+        $response = $this->actingAs($moderator)->patch(
+            "/api/films/{$film->id}",
+            ['imdb_id' => 'tt45678', 'status' => 'ready', 'name' => 'film']
+        );
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['data' => ['id', 'imdb_id', 'status']]);
@@ -149,7 +152,7 @@ class FilmTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeaders(['Accept' => 'application/json'])
-            ->patch("/api/films/{$film->id}", ['imdb_id'=> 'tt45678']);
+            ->patch("/api/films/{$film->id}", ['imdb_id' => 'tt45678']);
 
         $response->assertJson(['message' => 'This action is unauthorized.']);
         $response->assertStatus(403);
@@ -167,8 +170,10 @@ class FilmTest extends TestCase
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
-        $response = $this->actingAs($moderator)->patch("/api/films/{$film->id}",
-            ['imdb_id'=> '12365', 'status'=> 'not ready', 'name' => 415]);
+        $response = $this->actingAs($moderator)->patch(
+            "/api/films/{$film->id}",
+            ['imdb_id' => '12365', 'status' => 'not ready', 'name' => 415]
+        );
 
         $response->assertJsonValidationErrors(['imdb_id', 'name', 'status']);
         $response->assertJson(['message' => 'Переданные данные не корректны.']);

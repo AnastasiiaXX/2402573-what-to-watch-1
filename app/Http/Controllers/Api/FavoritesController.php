@@ -36,7 +36,7 @@ class FavoritesController extends Controller
     {
         $user = auth()->user();
         if ($user->favoriteFilms()->where('film_id', $film->id)->exists()) {
-            return new ErrorResponse(422,  'Переданные данные не корректны.');
+            return new ErrorResponse(422, 'Переданные данные не корректны.');
         }
         $user->favoriteFilms()->attach($film);
         $film->is_favourite = true;
@@ -54,7 +54,7 @@ class FavoritesController extends Controller
     {
         $user = auth()->user();
         if (!$user->favoriteFilms()->where('film_id', $film->id)->exists()) {
-            return new ErrorResponse(422,  'Переданные данные не корректны.');
+            return new ErrorResponse(422, 'Переданные данные не корректны.');
         }
         $user->favoriteFilms()->detach($film);
         return new SuccessResponse([], 200);

@@ -67,5 +67,5 @@ class Film extends Model
         return Attribute::make(
             get: fn () => $this->comments()->count(),
         );
-     }
+    }
 }

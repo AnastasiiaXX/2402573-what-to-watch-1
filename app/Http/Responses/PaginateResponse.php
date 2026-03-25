@@ -2,7 +2,7 @@
 
 namespace App\Http\Responses;
 
-use \Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaginateResponse extends BaseResponse
 {

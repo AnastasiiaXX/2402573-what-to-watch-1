@@ -16,6 +16,7 @@ use Tests\TestCase;
 class CommentTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test getting the film's reviews
      */
@@ -187,8 +188,4 @@ class CommentTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([]);
     }
-
-
-
-
 }

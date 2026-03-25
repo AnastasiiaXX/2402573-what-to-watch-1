@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Favourite extends Model
 {
-    public function film(): BelongsTo {
+    public function film(): BelongsTo
+    {
         return $this->belongsTo(Film::class);
     }
 
@@ -16,5 +17,4 @@ class Favourite extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }
