@@ -8,11 +8,14 @@ use App\Http\Responses\SuccessResponse;
 use App\Jobs\UpdateFilmJob;
 use App\Models\Film;
 use App\Models\Genre;
+use App\Services\VideoStorageService\VideoServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class FilmsController extends Controller
 {
+    public function __construct(private VideoServiceInterface $videoService) {}
+
     /**
      * Gets all films using filters and sorting
      *
@@ -53,6 +56,8 @@ class FilmsController extends Controller
         if ($user) {
             $film->is_favourite = $user->favoriteFilms()->where('film_id', $film->id)->exists();
         }
+        $film->video_link = $this->videoService->getVideoUrl($film->video_link);
+        $film->preview_video_link = $this->videoService->getVideoUrl($film->preview_video_link);
         return new SuccessResponse($film->load('genres'), 200);
     }
 
@@ -124,6 +129,9 @@ class FilmsController extends Controller
     public function showPromo(): SuccessResponse
     {
         $promo = Film::where('is_promo', true)->first();
+        $promo->video_link = $this->videoService->getVideoUrl($promo->video_link);
+        $promo->preview_video_link = $this->videoService->getVideoUrl($promo->preview_video_link);
+
         return new SuccessResponse($promo->load('genres'), 200);
     }
 

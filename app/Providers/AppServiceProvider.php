@@ -6,6 +6,8 @@ use App\Models\Comment;
 use App\Models\User;
 use App\Services\MovieService\MovieRepository;
 use App\Services\MovieService\MovieRepositoryInterface;
+use App\Services\VideoStorageService\LocalVideoService;
+use App\Services\VideoStorageService\VideoServiceInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MovieRepositoryInterface::class, MovieRepository::class);
         $this->app->bind(ClientInterface::class, Client::class);
         $this->app->bind(RequestFactoryInterface::class, HttpFactory::class);
+        $this->app->bind(VideoServiceInterface::class, LocalVideoService::class);
     }
 
     /**
