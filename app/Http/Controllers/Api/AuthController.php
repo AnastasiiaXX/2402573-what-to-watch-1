@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\SuccessResponse;
@@ -36,7 +37,7 @@ class AuthController extends Controller
             $path = $request->file('file')->store('avatars', 'public');
             $params['avatar'] = $path;
         }
-
+        $params['role_id'] = Role::where('name', 'user')->first()->id;
         $user = User::create($params);
         $token = $user->createToken('auth-token');
 
