@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Role;
+use App\Modelsfinal \Role;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\SuccessResponse;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 /** @method static User create(array $attributes = []) */
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): SuccessResponse
     {
         if (!Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
@@ -22,14 +22,14 @@ class AuthController extends Controller
 
         return new SuccessResponse(['token' => $token->plainTextToken], 200);
     }
-    public function logout()
+    public function logout(): SuccessResponse
     {
         Auth::user()->tokens()->delete();
 
         return new SuccessResponse(null, 204);
     }
 
-    public function store(RegisterRequest $request)
+    public function store(RegisterRequest $request): SuccessResponse
     {
         $params = $request->safe()->except('file');
 

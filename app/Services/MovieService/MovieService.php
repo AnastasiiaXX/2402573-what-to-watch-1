@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Services\MovieService;
 
@@ -7,14 +7,7 @@ use App\Models\Genre;
 
 class MovieService
 {
-    public function __construct(private MovieRepositoryInterface $repository)
-    {
-    }
 
-    public function searchMovieById(string $imdbId): ?array
-    {
-        return $this->repository->searchMovieById($imdbId);
-    }
 
     public function updateFilmInfo(string $imdbId): void
     {

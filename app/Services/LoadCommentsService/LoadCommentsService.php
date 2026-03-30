@@ -7,8 +7,7 @@ use App\Models\Film;
 
 class LoadCommentsService
 {
-    public function __construct(private LoadCommentsInterface $repository)
-    {}
+
 
     public function syncComments(Film $film): void
     {

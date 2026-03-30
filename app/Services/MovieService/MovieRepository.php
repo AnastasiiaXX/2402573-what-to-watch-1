@@ -7,12 +7,9 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 class MovieRepository implements MovieRepositoryInterface
 {
-    public function __construct(
-        private ClientInterface $httpClient,
-        private RequestFactoryInterface $requestFactory
-    ) {
-    }
 
+
+    #[\Override]
     public function searchMovieById(string $imdbId): ?array
     {
         $request = $this->requestFactory->createRequest(

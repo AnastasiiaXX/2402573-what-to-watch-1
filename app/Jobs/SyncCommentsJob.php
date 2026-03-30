@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Jobs;
 
@@ -18,12 +18,4 @@ class SyncCommentsJob implements ShouldQueue
      */
     public function __construct(private Film $film)
     {}
-
-    /**
-     * Execute the job.
-     */
-    public function handle(LoadCommentsService $commentsService): void
-    {
-        $commentsService->syncComments($this->film);
-    }
 }

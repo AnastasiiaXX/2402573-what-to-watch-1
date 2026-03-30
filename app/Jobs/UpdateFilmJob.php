@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Jobs;
 
@@ -17,12 +17,4 @@ class UpdateFilmJob implements ShouldQueue
      */
     public function __construct(private string $imdbId)
     {}
-
-    /**
-     * Execute the job.
-     */
-    public function handle(MovieService $movieService): void
-    {
-        $movieService->updateFilmInfo($this->imdbId);
-    }
 }

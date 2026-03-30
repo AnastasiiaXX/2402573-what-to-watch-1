@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Models;
 
@@ -51,21 +51,4 @@ class Film extends Model
         return $this->belongsToMany(Genre::class);
     }
 
-    public function favourites(): HasMany
-    {
-        return $this->hasMany(Favourite::class);
-    }
-
-    protected function rating(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->comments()->avg('rating'),
-        );
-    }
-    protected function scoresCount(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->comments()->count(),
-        );
-    }
 }

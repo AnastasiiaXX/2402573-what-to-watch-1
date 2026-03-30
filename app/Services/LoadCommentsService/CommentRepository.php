@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Services\LoadCommentsService;
 
@@ -7,11 +7,9 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 class CommentRepository implements LoadCommentsInterface
 {
-    public function __construct(
-        private ClientInterface $httpClient,
-        private RequestFactoryInterface $requestFactory
-    ) {}
 
+
+    #[\Override]
     public function getComments(string $imdbId): ?array
     {
         $request = $this->requestFactory->createRequest(
