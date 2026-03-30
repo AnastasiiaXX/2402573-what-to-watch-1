@@ -17,6 +17,10 @@ return [
         'key' => env('OMDB_API_KEY'),
     ],
 
+    'comments' => [
+        'url' => env('COMMENTS_API_URL'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

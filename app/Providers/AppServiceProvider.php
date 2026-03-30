@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Comment;
 use App\Models\User;
+use App\Services\LoadCommentsService\CommentRepository;
+use App\Services\LoadCommentsService\LoadCommentsInterface;
 use App\Services\MovieService\MovieRepository;
 use App\Services\MovieService\MovieRepositoryInterface;
 use App\Services\VideoStorageService\LocalVideoService;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ClientInterface::class, Client::class);
         $this->app->bind(RequestFactoryInterface::class, HttpFactory::class);
         $this->app->bind(VideoServiceInterface::class, LocalVideoService::class);
+        $this->app->bind(LoadCommentsInterface::class, CommentRepository::class);
     }
 
     /**
