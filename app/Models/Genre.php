@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illufinal minate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -26,14 +26,4 @@ class Genre extends Model
     protected $fillable = [
         'name',
     ];
-
-    /**
-     * Returns Film associated with this genre
-     *
-     * @return BelongsToMany<Film>
-     */
-    public function films(): BelongsToMany
-    {
-        return $this->belongsToMany(Film::class);
-    }
 }

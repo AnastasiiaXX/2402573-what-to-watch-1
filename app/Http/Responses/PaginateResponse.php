@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Http\Responses;
 
@@ -15,6 +15,7 @@ class PaginateResponse extends BaseResponse
         $this->responseCode = $responseCode;
     }
 
+    #[\Override]
     public function toResponse($request): Response
     {
         return response()->json($this->data, $this->responseCode);

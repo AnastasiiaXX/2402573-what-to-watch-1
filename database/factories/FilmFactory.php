@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Factofinal ry;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Film>
@@ -14,6 +14,7 @@ class FilmFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function definition(): array
     {
         return [

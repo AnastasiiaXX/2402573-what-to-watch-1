@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace Database\Seeders;
 
@@ -13,6 +13,6 @@ class GenreSeeder extends Seeder
      */
     public function run(): void
     {
-        $genre = Genre::factory(5)->create();
+        Genre::factory(5)->create();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminfinal ate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,7 +36,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'avatar'
+        'avatar',
+        'role_id'
     ];
 
     /**
@@ -54,6 +55,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

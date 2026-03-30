@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Models;
 
@@ -24,31 +24,4 @@ class Comment extends Model
     ];
 
     protected $appends = ['author_name'];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function film(): BelongsTo
-    {
-        return $this->belongsTo(Film::class);
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(Comment::class);
-    }
-
-    public function children(): HasMany
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
-    }
-
-    public function authorName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->user->name ?? 'guest'
-        );
-    }
 }

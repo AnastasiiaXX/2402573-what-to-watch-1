@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Http\Responses;
 
@@ -16,6 +16,7 @@ class ErrorResponse extends BaseResponse
         $this->message = $message;
         $this->errors = $errors;
     }
+    #[\Override]
     public function toResponse($request): Response
     {
         $response = ['message' => $this->message];

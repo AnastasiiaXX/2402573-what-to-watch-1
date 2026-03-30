@@ -2,12 +2,13 @@ final <?php
 
 namespace App\Jobs;
 
-use App\Services\MovieService\MovieService;
+use App\Models\Film;
+use App\Services\LoadCommentsService\LoadCommentsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 
-class UpdateFilmJob implements ShouldQueue
+class SyncCommentsJob implements ShouldQueue
 {
     use Queueable;
     use Dispatchable;
@@ -15,6 +16,6 @@ class UpdateFilmJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private string $imdbId)
+    public function __construct(private Film $film)
     {}
 }

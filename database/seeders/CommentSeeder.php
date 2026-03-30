@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace Database\Seeders;
 
@@ -10,16 +10,5 @@ use Illuminate\Database\Seeder;
 
 class CommentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        $film = Film::factory()->create();
-        $user = User::factory()->create();
-        Comment::factory()->create([
-            'film_id' => $film->id,
-            'user_id' => $user->id
-        ]);
-    }
+
 }

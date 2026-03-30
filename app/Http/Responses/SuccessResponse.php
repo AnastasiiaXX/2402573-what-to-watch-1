@@ -1,4 +1,4 @@
-<?php
+final <?php
 
 namespace App\Http\Responses;
 
@@ -14,6 +14,7 @@ class SuccessResponse extends BaseResponse
         $this->data = $data;
         $this->responseCode = $responseCode;
     }
+    #[\Override]
     public function toResponse($request): Response
     {
         return response()->json(['data' => $this->data], $this->responseCode);
