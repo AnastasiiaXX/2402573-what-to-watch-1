@@ -1,8 +1,9 @@
-final <?php
+<?php
 
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Responses\SuccessResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,18 +25,13 @@ class UsersController extends Controller
     /**
      * Edits current user's profile
      *
-     * @param Request $request
+     * @param UpdateUserProfileRequest $request
      * @return SuccessResponse
      */
-    public function update(Request $request): SuccessResponse
+    public function update(UpdateUserProfileRequest $request): SuccessResponse
     {
         $user = auth()->user();
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore(auth()->id())],
-            'password' => ['string', 'min:8'],
-            'file' => ['nullable', 'image', 'max:10240']
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('file')) {
             $path = $request->file('file')->store('avatars', 'public');

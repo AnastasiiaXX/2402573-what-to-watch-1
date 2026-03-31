@@ -1,15 +1,16 @@
-final <?php
+<?php
 
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Responses\ErrorResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Comment;
 use App\Models\Film;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class CommentsController extends Controller
 {
@@ -33,17 +34,13 @@ class CommentsController extends Controller
      * Adds a comment/review to the film
      *
      * @param Film $film
-     * @param Request $request
+     * @param StoreCommentRequest $request
      * @return SuccessResponse
      */
-    public function store(Film $film, Request $request): SuccessResponse
+    public function store(Film $film, StoreCommentRequest $request): SuccessResponse
     {
         $user = auth()->user();
-        $validated = $request->validate([
-            'comment' => ['required', 'string', 'min:50', 'max:400'],
-            'rating' => ['required','integer', 'min:1', 'max:10'],
-            'comment_id' => ['integer', 'exists:comments,id'],
-        ]);
+        $validated = $request->validated();
         $comment = $film->comments()->create([...$validated, 'user_id' => $user->id]);
         return new SuccessResponse($comment, 200);
     }
@@ -51,17 +48,14 @@ class CommentsController extends Controller
     /**
      * Edits a comment/review to the film
      *
-     * @param Request $request
+     * @param UpdateCommentRequest $request
      * @param Comment $comment
      * @return SuccessResponse|ErrorResponse
      */
-    public function update(Request $request, Comment $comment): SuccessResponse|ErrorResponse
+    public function update(UpdateCommentRequest $request, Comment $comment): SuccessResponse|ErrorResponse
     {
         if (Gate::allows('comment-update', $comment)) {
-            $validated = $request->validate([
-                'comment' => ['required', 'string', 'min:50', 'max:400'],
-                'rating' => ['integer', 'min:1', 'max:10']
-            ]);
+            $validated = $request->validated();
             $comment->update($validated);
             return new SuccessResponse($comment, 200);
         } else {

@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Genre;
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateGenreRequest;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\Rule;
 
 class GenresController extends Controller
 {
@@ -27,14 +26,14 @@ class GenresController extends Controller
     /**
      * Updates a genre
      *
-     * @param Request $request
+     * @param UpdateGenreRequest $request
      * @param Genre $genre
      *
      * @return SuccessResponse
      */
-    public function update(Request $request, Genre $genre): SuccessResponse
+    public function update(UpdateGenreRequest $request, Genre $genre): SuccessResponse
     {
-        $validated = $request->validate(['name' => ['required', 'string', Rule::unique('genres')->ignore($genre->id)]]);
+        $validated = $request->validated();
         $genre->update($validated);
         Cache::forget('genres');
         return new SuccessResponse($genre, 200);
