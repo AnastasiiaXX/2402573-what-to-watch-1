@@ -1,4 +1,4 @@
-final <?php
+<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Genre;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class GenresController extends Controller
@@ -17,7 +18,9 @@ class GenresController extends Controller
      */
     public function index(): SuccessResponse
     {
-        $genres = Genre::all();
+        $genres = Cache::remember('genres', 3600, function () {
+            return Genre::all();
+        });
         return new SuccessResponse($genres, 200);
     }
 
@@ -33,6 +36,7 @@ class GenresController extends Controller
     {
         $validated = $request->validate(['name' => ['required', 'string', Rule::unique('genres')->ignore($genre->id)]]);
         $genre->update($validated);
+        Cache::forget('genres');
         return new SuccessResponse($genre, 200);
     }
 }

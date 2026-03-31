@@ -10,6 +10,7 @@ use App\Models\Film;
 use App\Models\Genre;
 use App\Services\VideoStorageService\VideoServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class FilmsController extends Controller
@@ -128,11 +129,14 @@ class FilmsController extends Controller
      */
     public function showPromo(): SuccessResponse
     {
-        $promo = Film::where('is_promo', true)->first();
+        $promo = Cache::remember('promo', 3600, function () {
+            return Film::where('is_promo', true)->first()->load('genres');
+        });
+
         $promo->video_link = $this->videoService->getVideoUrl($promo->video_link);
         $promo->preview_video_link = $this->videoService->getVideoUrl($promo->preview_video_link);
 
-        return new SuccessResponse($promo->load('genres'), 200);
+        return new SuccessResponse($promo, 200);
     }
 
     /**
@@ -144,6 +148,7 @@ class FilmsController extends Controller
     public function storePromo(Film $film): SuccessResponse
     {
         $film->update(['is_promo' => true]);
+        Cache::forget('promo');
         return new SuccessResponse($film, 200);
     }
 }
