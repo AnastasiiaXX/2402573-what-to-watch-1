@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Cache;
 
 class MovieService
 {
-    public function __construct(private MovieRepositoryInterface $repository) {}
+    public function __construct(private MovieRepositoryInterface $repository)
+    {
+    }
 
     public function searchMovieById(string $imdbId): ?array
     {

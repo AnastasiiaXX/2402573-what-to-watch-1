@@ -16,4 +16,11 @@
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <UnusedClass errorLevel="suppress" />
+        <PossiblyUnusedMethod errorLevel="suppress" />
+        <UnusedMethod errorLevel="suppress" />
+        <PossiblyUnusedProperty errorLevel="suppress" />
+        <MissingTemplateParam errorLevel="suppress" />
+    </issueHandlers>
 <plugins><pluginClass class="Psalm\LaravelPlugin\Plugin"/></plugins></psalm>

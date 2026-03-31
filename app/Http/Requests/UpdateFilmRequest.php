@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Film;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -23,6 +24,8 @@ class UpdateFilmRequest extends FormRequest
      */
     public function rules(): array
     {
+        $film = $this->route('film');
+        $filmId = ($film instanceof Film) ? $film->id : $film;
         return [
             'name' => ['required', 'string', 'max:255'],
             'poster_image' => ['string', 'max:255'],
@@ -37,7 +40,12 @@ class UpdateFilmRequest extends FormRequest
             'genre' => ['array'],
             'released' => ['integer'],
             'run_time' => ['integer'],
-            'imdb_id' => ['string', Rule::unique('films')->ignore($this->route('film')->id), 'regex:/^tt\d+$/', 'required'],
+            'imdb_id' => [
+                'string',
+                Rule::unique('films')->ignore($filmId),
+                'regex:/^tt\d+$/',
+                'required'
+            ],
             'status' => ['required','string', Rule::in(['ready', 'pending', 'on moderation'])]
         ];
     }

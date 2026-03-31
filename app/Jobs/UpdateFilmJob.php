@@ -17,7 +17,8 @@ class UpdateFilmJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(private string $imdbId)
-    {}
+    {
+    }
 
     /**
      * Execute the job.

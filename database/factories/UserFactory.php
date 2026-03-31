@@ -3,12 +3,14 @@
 namespace Database\Factories;
 
 use App\Models\Role;
-use Illuminate\Database\Elofinal quent\Factories\Factory;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Override;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -22,7 +24,7 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     public function definition(): array
     {
         return [
@@ -31,7 +33,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'avatar' => null
+            'avatar' => null,
+            'role_id' => Role::factory(),
         ];
     }
 }

@@ -1,7 +1,8 @@
-final <?php
+<?php
 
 namespace App\Http\Responses;
 
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class SuccessResponse extends BaseResponse
@@ -14,7 +15,8 @@ class SuccessResponse extends BaseResponse
         $this->data = $data;
         $this->responseCode = $responseCode;
     }
-    #[\Override]
+
+    #[Override]
     public function toResponse($request): Response
     {
         return response()->json(['data' => $this->data], $this->responseCode);

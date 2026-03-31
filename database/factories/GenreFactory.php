@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factorfinal y;
+use App\Models\Genre;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Genre>
+ * @extends Factory<Genre>
  */
 class GenreFactory extends Factory
 {
@@ -14,7 +16,7 @@ class GenreFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     public function definition(): array
     {
         return [

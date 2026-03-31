@@ -7,7 +7,9 @@ use App\Models\Film;
 
 class LoadCommentsService
 {
-
+    public function __construct(private LoadCommentsInterface $repository)
+    {
+    }
 
     public function syncComments(Film $film): void
     {
@@ -15,6 +17,7 @@ class LoadCommentsService
         if (!$data) {
             return;
         }
+        /** @psalm-suppress UndefinedMagicMethod */
         Comment::insert(array_map(fn($comment) => [
             'film_id' => $film->id,
             'comment' => $comment['text'],

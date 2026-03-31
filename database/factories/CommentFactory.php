@@ -2,11 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
 use App\Models\Film;
-use Illuminate\Database\Eloquefinal nt\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comment>
+ * @extends Factory<Comment>
  */
 class CommentFactory extends Factory
 {
@@ -15,7 +17,7 @@ class CommentFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     public function definition(): array
     {
         return [

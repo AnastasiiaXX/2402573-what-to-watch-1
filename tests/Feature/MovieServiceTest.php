@@ -12,6 +12,7 @@ use Tests\TestCase;
 class MovieServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test services updates film info
      */

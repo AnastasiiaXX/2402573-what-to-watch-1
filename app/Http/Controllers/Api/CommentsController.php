@@ -9,7 +9,6 @@ use App\Http\Responses\ErrorResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Comment;
 use App\Models\Film;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class CommentsController extends Controller
@@ -41,6 +40,7 @@ class CommentsController extends Controller
     {
         $user = auth()->user();
         $validated = $request->validated();
+        /** @var array $validated */
         $comment = $film->comments()->create([...$validated, 'user_id' => $user->id]);
         return new SuccessResponse($comment, 200);
     }

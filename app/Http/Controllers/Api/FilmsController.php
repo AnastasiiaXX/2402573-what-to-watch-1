@@ -17,7 +17,9 @@ use Illuminate\Validation\Rule;
 
 class FilmsController extends Controller
 {
-    public function __construct(private VideoServiceInterface $videoService) {}
+    public function __construct(private VideoServiceInterface $videoService)
+    {
+    }
 
     /**
      * Gets all films using filters and sorting
@@ -72,6 +74,7 @@ class FilmsController extends Controller
      */
     public function store(StoreFilmRequest $request): SuccessResponse
     {
+        /** @var array $validated */
         $validated = $request->validated();
         $newFilm = Film::create([...$validated, 'status' => 'pending']);
         UpdatefilmJob::dispatch($validated['imdb_id']);
@@ -101,7 +104,7 @@ class FilmsController extends Controller
     public function indexSimilar(Film $film): SuccessResponse
     {
         $genres = $film->genres;
-
+        /** @var \Illuminate\Database\Eloquent\Collection $genres */
         $similar = Film::whereAttachedTo($genres)->where('id', '!=', $film->id)
                     ->limit(4)
                     ->get();

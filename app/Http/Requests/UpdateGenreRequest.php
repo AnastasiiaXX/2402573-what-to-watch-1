@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Genre;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -23,8 +24,10 @@ class UpdateGenreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $genre = $this->route('genre');
+        $genreId = ($genre instanceof Genre) ? $genre->id : $genre;
         return [
-            'name' => ['required', 'string', Rule::unique('genres')->ignore($this->route('genre')->id)]
+            'name' => ['required', 'string', Rule::unique('genres')->ignore($genreId)]
         ];
     }
 }

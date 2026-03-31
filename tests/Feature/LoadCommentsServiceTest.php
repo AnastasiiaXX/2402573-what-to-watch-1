@@ -11,6 +11,7 @@ use Tests\TestCase;
 class LoadCommentsServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * Test comments service returns
      *  external source comments
