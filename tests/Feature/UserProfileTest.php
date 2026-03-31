@@ -58,9 +58,9 @@ class UserProfileTest extends TestCase
         $user = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)
-                        ->patch('/api/user', ['name'=> 'New Name', 'email' => 'newemail@bk.org']);
+                        ->patch('/api/user', ['name' => 'New Name', 'email' => 'newemail@bk.org']);
         $response->assertStatus(200);
-        $this->assertDatabaseHas('users', ['name'=> 'New Name', 'email' => 'newemail@bk.org']);
+        $this->assertDatabaseHas('users', ['name' => 'New Name', 'email' => 'newemail@bk.org']);
     }
 
     /**
@@ -87,7 +87,7 @@ class UserProfileTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeaders(['Accept' => 'application/json'])
-            ->patch('/api/user', ['name'=> 'New Name', 'email' => 'new_email.com']);
+            ->patch('/api/user', ['name' => 'New Name', 'email' => 'new_email.com']);
 
         $response->assertJsonValidationErrors(['email']);
         $response->assertJson(['message' => 'Переданные данные не корректны.']);
@@ -105,10 +105,10 @@ class UserProfileTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeaders(['Accept' => 'application/json'])
-            ->patch('/api/user', ['name'=> 'New Name', 'email' => $user->email]);
+            ->patch('/api/user', ['name' => 'New Name', 'email' => $user->email]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('users', ['name'=> 'New Name', 'email' => $user->email]);
+        $this->assertDatabaseHas('users', ['name' => 'New Name', 'email' => $user->email]);
     }
 
     /**
@@ -122,7 +122,7 @@ class UserProfileTest extends TestCase
 
         $response = $this->actingAs($user)
             ->withHeaders(['Accept' => 'application/json'])
-            ->patch('/api/user', ['name'=> 'New Name', 'email' => $user->email, 'password' => 'newpassword']);
+            ->patch('/api/user', ['name' => 'New Name', 'email' => $user->email, 'password' => 'newpassword']);
 
         $hashed = Hash::check('newpassword', $user->fresh()->password);
         $response->assertStatus(200);

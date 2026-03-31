@@ -116,13 +116,17 @@ class FilmsController extends Controller
     public function showPromo(): SuccessResponse
     {
         $promo = Cache::remember('promo', 3600, function () {
-            return Film::where('is_promo', true)->first()->load('genres');
+            return Film::where('is_promo', true)->first();
         });
+
+        if (!$promo) {
+            abort(404);
+        }
 
         $promo->video_link = $this->videoService->getVideoUrl($promo->video_link);
         $promo->preview_video_link = $this->videoService->getVideoUrl($promo->preview_video_link);
 
-        return new SuccessResponse($promo, 200);
+        return new SuccessResponse($promo->load('genres'), 200);
     }
 
     /**
