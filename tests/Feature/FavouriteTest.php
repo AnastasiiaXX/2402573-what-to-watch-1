@@ -97,6 +97,7 @@ class FavouriteTest extends TestCase
 
         $response = $this->actingAs($user)->post("/api/films/9999/favourite");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
@@ -159,6 +160,7 @@ class FavouriteTest extends TestCase
 
         $response = $this->actingAs($user)->delete("/api/films/9999/favourite");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**

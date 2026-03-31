@@ -79,7 +79,7 @@ class GenreTest extends TestCase
                             ->withHeaders(['Accept' => 'application/json'])
                             ->patch("/api/genres/{$genre->id}", ['name' => 'newName']);
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
     }
 
     /**

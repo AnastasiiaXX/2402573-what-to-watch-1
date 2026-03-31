@@ -67,6 +67,7 @@ class FilmTest extends TestCase
     {
         $response = $this->get("/api/films/9999");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
@@ -94,7 +95,7 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->post('/api/films', ['imdb_id' => 'tt45678']);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
@@ -143,7 +144,7 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->patch("/api/films/{$film->id}", ['imdb_id' => 'tt45678']);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
@@ -179,6 +180,7 @@ class FilmTest extends TestCase
             ->patch('/api/films/9999');
 
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
@@ -223,7 +225,7 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->post("/api/promo/{$film->id}", ['is_promo' => true]);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
@@ -238,6 +240,7 @@ class FilmTest extends TestCase
         $response = $this->actingAs($moderator)->post('/api/promo/9999');
 
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
