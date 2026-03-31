@@ -27,6 +27,7 @@ class AuthTest extends TestCase
      */
     public function testLoginSuccessfully(): void
     {
+
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
         $response = $this->post('/api/login', ['email' => $user->email, 'password' => 'password']);

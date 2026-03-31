@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\SuccessResponse;
@@ -12,7 +13,13 @@ use Illuminate\Support\Facades\Auth;
 /** @method static User create(array $attributes = []) */
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    /**
+     * Logs in the user and creates token
+     *
+     * @param LoginRequest $request
+     * @return SuccessResponse
+     */
+    public function login(LoginRequest $request): SuccessResponse
     {
         if (!Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
@@ -21,23 +28,38 @@ class AuthController extends Controller
 
         return new SuccessResponse(['token' => $token->plainTextToken], 200);
     }
-    public function logout()
+
+    /**
+     * Logs the user out
+     *
+     * @return SuccessResponse
+     */
+    public function logout(): SuccessResponse
     {
         Auth::user()->tokens()->delete();
 
         return new SuccessResponse(null, 204);
     }
 
-    public function store(RegisterRequest $request)
+    /**
+     * Registers the user
+     *
+     * @param RegisterRequest $request
+     * @return SuccessResponse
+     */
+    public function store(RegisterRequest $request): SuccessResponse
     {
-        $params = $request->safe()->except('file');
+        $params = $request->validated();
 
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('avatars', 'public');
-            $params['avatar'] = $path;
+            $params['avatar'] = $request->file('file')->store('avatars', 'public');
         }
 
-        $user = User::create($params);
+        $user = new User($params);
+
+        $user->role_id = Role::where('name', 'user')->first()->id;
+
+        $user->save();
         $token = $user->createToken('auth-token');
 
         return new SuccessResponse([
