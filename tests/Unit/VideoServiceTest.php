@@ -27,4 +27,3 @@ class VideoServiceTest extends TestCase
         $this->assertNull($result);
     }
 }
-
