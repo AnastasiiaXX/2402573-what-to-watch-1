@@ -1,13 +1,19 @@
-final <?php
+<?php
 
 namespace App\Services\MovieService;
 
 use App\Models\Film;
 use App\Models\Genre;
+use Illuminate\Support\Facades\Cache;
 
 class MovieService
 {
+    public function __construct(private MovieRepositoryInterface $repository) {}
 
+    public function searchMovieById(string $imdbId): ?array
+    {
+        return $this->repository->searchMovieById($imdbId);
+    }
 
     public function updateFilmInfo(string $imdbId): void
     {
@@ -21,6 +27,8 @@ class MovieService
                 $genreIds[] = $genre->id;
             }
             $film->genres()->sync($genreIds);
+            Cache::forget('promo');
+            Cache::forget('genres');
         }
     }
 }
