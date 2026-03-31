@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFilmRequest;
+use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\PaginateResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Jobs\UpdateFilmJob;
@@ -10,11 +12,14 @@ use App\Models\Film;
 use App\Models\Genre;
 use App\Services\VideoStorageService\VideoServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class FilmsController extends Controller
 {
-    public function __construct(private VideoServiceInterface $videoService) {}
+    public function __construct(private VideoServiceInterface $videoService)
+    {
+    }
 
     /**
      * Gets all films using filters and sorting
@@ -64,12 +69,13 @@ class FilmsController extends Controller
     /**
      * Adds film (moderator only)
      *
-     * @param Request $request
+     * @param StoreFilmRequest $request
      * @return SuccessResponse
      */
-    public function store(Request $request): SuccessResponse
+    public function store(StoreFilmRequest $request): SuccessResponse
     {
-        $validated = $request->validate(['imdb_id' => ['required', 'string', 'unique:films', 'regex:/^tt\d+$/']]);
+        /** @var array $validated */
+        $validated = $request->validated();
         $newFilm = Film::create([...$validated, 'status' => 'pending']);
         UpdatefilmJob::dispatch($validated['imdb_id']);
         return new SuccessResponse($newFilm, 201);
@@ -78,29 +84,13 @@ class FilmsController extends Controller
     /**
      * Updates film (moderator only)
      *
-     * @param Request $request
+     * @param UpdateFilmRequest $request
      * @param Film $film
      * @return SuccessResponse
      */
-    public function update(Request $request, Film $film): SuccessResponse
+    public function update(UpdateFilmRequest $request, Film $film): SuccessResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'poster_image' => ['string', 'max:255'],
-            'preview_image' => ['string', 'max:255'],
-            'background_image' => ['string', 'max:255'],
-            'background_color' => ['string', 'max:9'],
-            'video_link' => ['string', 'max:255'],
-            'preview_video_link' => ['string', 'max:255'],
-            'description' => ['string', 'max:1000'],
-            'director' => ['string', 'max:255'],
-            'starring' => ['array'],
-            'genre' => ['array'],
-            'released' => ['integer'],
-            'run_time' => ['integer'],
-            'imdb_id' => ['string', Rule::unique('films')->ignore($film->id), 'regex:/^tt\d+$/', 'required'],
-            'status' => ['required','string', Rule::in(['ready', 'pending', 'on moderation'])],
-        ]);
+        $validated = $request->validated();
          $film->update($validated);
         return new SuccessResponse($film, 200);
     }
@@ -114,7 +104,7 @@ class FilmsController extends Controller
     public function indexSimilar(Film $film): SuccessResponse
     {
         $genres = $film->genres;
-
+        /** @var \Illuminate\Database\Eloquent\Collection $genres */
         $similar = Film::whereAttachedTo($genres)->where('id', '!=', $film->id)
                     ->limit(4)
                     ->get();
@@ -128,7 +118,14 @@ class FilmsController extends Controller
      */
     public function showPromo(): SuccessResponse
     {
-        $promo = Film::where('is_promo', true)->first();
+        $promo = Cache::remember('promo', 3600, function () {
+            return Film::where('is_promo', true)->first();
+        });
+
+        if (!$promo) {
+            abort(404);
+        }
+
         $promo->video_link = $this->videoService->getVideoUrl($promo->video_link);
         $promo->preview_video_link = $this->videoService->getVideoUrl($promo->preview_video_link);
 
@@ -144,6 +141,7 @@ class FilmsController extends Controller
     public function storePromo(Film $film): SuccessResponse
     {
         $film->update(['is_promo' => true]);
+        Cache::forget('promo');
         return new SuccessResponse($film, 200);
     }
 }

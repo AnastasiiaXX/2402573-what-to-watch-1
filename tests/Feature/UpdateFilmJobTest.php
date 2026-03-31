@@ -7,10 +7,8 @@ use App\Models\Film;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\MovieService\MovieRepositoryInterface;
-use App\Services\MovieService\MovieService;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
@@ -21,7 +19,7 @@ class UpdateFilmJobTest extends TestCase
     /**
      * Testing adding a job to the queue
      */
-    public function test_update_job_pushed_in_queue(): void
+    public function testUpdateJobPushedInQueue(): void
     {
         Queue::fake();
 
@@ -39,11 +37,10 @@ class UpdateFilmJobTest extends TestCase
      * Testing checking that a job data
      * updates database
      */
-    public function test_job_updates_database(): void
+    public function testJobUpdatesDatabase(): void
     {
         $film = Film::factory()->create();
-        $this->mock(MovieRepositoryInterface::class, function ($mock) use ($film)
-        {
+        $this->mock(MovieRepositoryInterface::class, function ($mock) use ($film) {
             $mock->shouldReceive('searchMovieById')
                 ->with($film->imdb_id)
                 ->andReturn(['name' => 'Test Name',

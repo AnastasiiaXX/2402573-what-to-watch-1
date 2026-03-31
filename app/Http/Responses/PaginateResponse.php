@@ -1,7 +1,8 @@
-final <?php
+<?php
 
 namespace App\Http\Responses;
 
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class PaginateResponse extends BaseResponse
@@ -15,7 +16,7 @@ class PaginateResponse extends BaseResponse
         $this->responseCode = $responseCode;
     }
 
-    #[\Override]
+    #[Override]
     public function toResponse($request): Response
     {
         return response()->json($this->data, $this->responseCode);

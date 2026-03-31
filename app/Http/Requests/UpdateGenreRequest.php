@@ -2,17 +2,19 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Genre;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class LoginRequest extends FormRequest
+class UpdateGenreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && auth()->user()->isModerator();
     }
 
     /**
@@ -22,9 +24,10 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
+        $genre = $this->route('genre');
+        $genreId = ($genre instanceof Genre) ? $genre->id : $genre;
         return [
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'name' => ['required', 'string', Rule::unique('genres')->ignore($genreId)]
         ];
     }
 }

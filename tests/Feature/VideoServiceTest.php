@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use App\Services\VideoStorageService\LocalVideoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,7 +11,7 @@ class VideoServiceTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A basic unit test example.
+     * Test service returns video link
      */
     public function testVideoServiceReturnsPath(): void
     {
@@ -20,6 +20,9 @@ class VideoServiceTest extends TestCase
         $this->assertEquals('https://example.com/video.mp4', $result);
     }
 
+    /**
+     * Test service returns null
+     */
     public function testVideoServiceReturnsNull(): void
     {
         $service = new LocalVideoService();
@@ -27,4 +30,3 @@ class VideoServiceTest extends TestCase
         $this->assertNull($result);
     }
 }
-

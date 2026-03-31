@@ -2,29 +2,51 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminfinal ate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\PersonalAccessToken;
+use Override;
 
 /**
  * @mixin Builder
  * @property int $id
  * @property string $name
+ * @property int $role_id
+ * @property string $email
+ * @property string $password
  * @method static self create(array $attributes = [])
+ * @property Carbon|null $email_verified_at
+ * @property string|null $remember_token
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string|null $avatar
+ * @property-read Collection<int, Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read Collection<int, Film> $favoriteFilms
+ * @property-read int|null $favorite_films_count
+ * @property-read Collection<int, Favourite> $favorites
+ * @property-read int|null $favorites_count
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Role $role
+ * @property-read Collection<int, PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
  */
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens;
     use HasFactory;
+
     use Notifiable;
 
     /**
@@ -37,7 +59,6 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
-        'role_id'
     ];
 
     /**
@@ -55,7 +76,8 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    #[\Override]
+
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -1,7 +1,8 @@
-final <?php
+<?php
 
 namespace App\Http\Responses;
 
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class ErrorResponse extends BaseResponse
@@ -16,7 +17,8 @@ class ErrorResponse extends BaseResponse
         $this->message = $message;
         $this->errors = $errors;
     }
-    #[\Override]
+
+    #[Override]
     public function toResponse($request): Response
     {
         $response = ['message' => $this->message];

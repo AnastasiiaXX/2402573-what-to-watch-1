@@ -6,11 +6,8 @@ use App\Models\Film;
 use App\Models\Genre;
 use App\Models\Role;
 use App\Models\User;
-use Database\Seeders\FilmSeeder;
-use Database\Seeders\GenreSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class FilmTest extends TestCase
@@ -18,12 +15,22 @@ class FilmTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Prepares roles for users
+     *
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RoleSeeder::class);
+    }
+
+    /**
      *  Test getting list of films
      */
-    public function test_show_films(): void
+    public function testShowFilms(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
+        Film::factory()->create();
+        Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
@@ -32,18 +39,16 @@ class FilmTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['data' => [['id', 'name', 'poster_image', 'preview_image', 'background_image',
             'background_color', 'video_link', 'preview_video_link', 'description', 'rating', 'scores_count', 'released',
-            'director', 'starring', 'run_time', 'genres', 'is_favourite']], 'current_page', 'first_page_url', 'next_page_url',
-            'prev_page_url', 'per_page', 'total']);
+            'director', 'starring', 'run_time', 'genres', 'is_favourite']], 'current_page', 'first_page_url',
+            'next_page_url', 'prev_page_url', 'per_page', 'total']);
     }
 
     /**
      *  Test getting one film
      */
-    public function test_show_one(): void
+    public function testShowOne(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-        $film = Film::first();
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
@@ -58,37 +63,31 @@ class FilmTest extends TestCase
     /**
      *  Test getting non-existing film
      */
-    public function test_film_does_not_exist(): void
+    public function testFilmDoesNotExist(): void
     {
-        $this->seed(FilmSeeder::class);
         $response = $this->get("/api/films/9999");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
      *  Test adding new film
      */
-    public function test_add_new_film(): void
+    public function testAddNewFilm(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
         $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id' => 'tt45678']);
 
         $response->assertStatus(201);
-        $response->assertJsonStructure(['data' => ['id', 'imdb_id', 'status']]);
+        $this->assertDatabaseHas('films', ['imdb_id' => 'tt45678']);
     }
 
     /**
      *  Test adding new film as a regular user
      */
-    public function test_add_new_film_not_moderator(): void
+    public function testAddNewFilmNotModerator(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
@@ -96,18 +95,15 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->post('/api/films', ['imdb_id' => 'tt45678']);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
     /**
      *  Test adding new film with a wrong dataset
      */
-    public function test_add_new_film_with_invalid_data(): void
+    public function testAddNewFilmWithInvalidData(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
         $response = $this->actingAs($moderator)->post('/api/films', ['imdb_id' => 1]);
@@ -120,12 +116,9 @@ class FilmTest extends TestCase
     /**
      *  Test updating a film
      */
-    public function test_update_film(): void
+    public function testUpdateFilm(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
-        $film = Film::first();
+        $film = Film::factory()->create();
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
@@ -135,18 +128,15 @@ class FilmTest extends TestCase
         );
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(['data' => ['id', 'imdb_id', 'status']]);
+        $this->assertDatabaseHas('films', ['imdb_id' => 'tt45678', 'status' => 'ready', 'name' => 'film']);
     }
 
     /**
      *  Test updating a film by a common user
      */
-    public function test_update_film_not_moderator(): void
+    public function testUpdateFilmNotModerator(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
-        $film = Film::first();
+        $film = Film::factory()->create();
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
@@ -154,19 +144,16 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->patch("/api/films/{$film->id}", ['imdb_id' => 'tt45678']);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
     /**
      *  Test updating a film with wrong data
      */
-    public function test_update_film_with_invalid_data(): void
+    public function testUpdateFilmWithInvalidData(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
-        $film = Film::first();
+        $film = Film::factory()->create();
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
@@ -183,11 +170,8 @@ class FilmTest extends TestCase
     /**
      *  Test updating a non-existing film
      */
-    public function test_update_film_does_not_exist(): void
+    public function testUpdateFilmDoesNotExist(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
@@ -196,14 +180,16 @@ class FilmTest extends TestCase
             ->patch('/api/films/9999');
 
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
      *  Test showing a promo film
      */
-    public function test_show_promo(): void
+    public function testShowPromo(): void
     {
-        $this->seed(FilmSeeder::class);
+        Film::factory()->create(['is_promo' => true]);
+
         $response = $this->get('/api/promo');
         $response->assertStatus(200);
         $response->assertJsonStructure(['data' => ['id', 'name', 'poster_image', 'preview_image', 'background_image',
@@ -214,30 +200,24 @@ class FilmTest extends TestCase
     /**
      *  Test adding a promo film
      */
-    public function test_add_promo(): void
+    public function testAddPromo(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
-        $film = Film::first();
+        $film = Film::factory()->create();
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($moderator)->post("/api/promo/{$film->id}", ['is_promo' => true]);
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(['data' => ['id', 'imdb_id', 'status']]);
+        $this->assertDatabaseHas('films', ['id' => $film->id, 'is_promo' => true]);
     }
 
     /**
      *  Test adding a promo film with user rights
      */
-    public function test_add_promo_not_moderator(): void
+    public function testAddPromoNotModerator(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
-        $film = Film::first();
+        $film = Film::factory()->create();
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
@@ -245,30 +225,28 @@ class FilmTest extends TestCase
             ->withHeaders(['Accept' => 'application/json'])
             ->post("/api/promo/{$film->id}", ['is_promo' => true]);
 
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
         $response->assertStatus(403);
     }
 
     /**
      *  Test adding a non-exisitng promo film
      */
-    public function test_add_promo_does_not_exist(): void
+    public function testAddPromoDoesNotExist(): void
     {
-        $this->seed(FilmSeeder::class);
-        $this->seed(RoleSeeder::class);
-
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($moderator)->post('/api/promo/9999');
 
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
      *  Test showing films with the same genre
      */
-    public function test_show_similar(): void
+    public function testShowSimilar(): void
     {
         $genre = Genre::factory()->create();
         Film::factory()->hasAttached($genre)->create();

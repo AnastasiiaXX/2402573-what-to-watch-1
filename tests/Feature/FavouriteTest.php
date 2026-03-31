@@ -16,17 +16,25 @@ class FavouriteTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Prepares roles for users
+     *
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RoleSeeder::class);
+    }
+
+    /**
      * Test to get films added to favourites
      */
-    public function test_show_favourites(): void
+    public function testShowFavourites(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
-        $film = Film::first();
         $user->favoriteFilms()->attach($film->id);
         $response = $this->actingAs($user)->get('/api/favourite');
 
@@ -40,10 +48,8 @@ class FavouriteTest extends TestCase
      * Test to get films added to favourites
      * as un unauthorized user
      */
-    public function test_show_favourites_not_authorized(): void
+    public function testShowFavouritesNotAuthorized(): void
     {
-        $this->seed(FilmSeeder::class);
-
         $response = $this->withHeaders(['Accept' => 'application/json'])
                             ->get('/api/favourite');
         $response->assertJson(['message' => 'Запрос требует аутентификации.']);
@@ -53,31 +59,28 @@ class FavouriteTest extends TestCase
     /**
      * Test adding film to favourites
      */
-    public function test_add_film_to_favourites(): void
+    public function testAddFilmToFavourites(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
-        $film = Film::first();
         $response = $this->actingAs($user)->post("/api/films/{$film->id}/favourite");
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(['data' => ['id', 'name', 'poster_image', 'preview_image', 'background_image',
-            'background_color', 'video_link', 'preview_video_link', 'description', 'rating', 'scores_count', 'released',
-            'director', 'starring', 'run_time', 'genres', 'is_favourite']]);
+        $this->assertDatabaseHas('favourites', [
+            'film_id' => $film->id,
+            'user_id' => $user->id,
+        ]);
     }
 
     /**
      * Test adding film to favourites
      * as an unauthorized user
      */
-    public function test_add_film_to_favourites_not_authorized(): void
+    public function testAddFilmToFavouritesNotAuthorized(): void
     {
-        $this->seed(FilmSeeder::class);
-
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->post('/api/films/12/favourite');
         $response->assertJson(['message' => 'Запрос требует аутентификации.']);
@@ -87,30 +90,26 @@ class FavouriteTest extends TestCase
     /**
      * Test adding a non-exsistent film to favourites
      */
-    public function test_add_film_to_favourites_does_not_exist(): void
+    public function testAddFilmToFavouritesDoesNotExist(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
-
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)->post("/api/films/9999/favourite");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
      * Test adding a film to favourites for the second time
      */
-    public function test_add_film_to_favourites_already_added(): void
+    public function testAddFilmToFavouritesAlreadyAdded(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
-        $film = Film::first();
         $user->favoriteFilms()->attach($film);
 
         $response = $this->actingAs($user)->post("/api/films/{$film->id}/favourite");
@@ -122,26 +121,28 @@ class FavouriteTest extends TestCase
     /**
      * Test deleting a film from favourites
      */
-    public function test_delete_film_from_favourites(): void
+    public function testDeleteFilmFromFavourites(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
-        $film = Film::first();
         $user->favoriteFilms()->attach($film);
         $response = $this->actingAs($user)->delete("/api/films/{$film->id}/favourite");
 
         $response->assertStatus(200);
+        $this->assertDatabaseMissing('favourites', [
+            'film_id' => $film->id,
+            'user_id' => $user->id,
+        ]);
     }
 
     /**
      *  Test deleting a film from favourites
      * as an unauthorized user
      */
-    public function test_delete_film_from_favourites_not_authorized(): void
+    public function testDeleteFilmFromFavouritesNotAuthorized(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->delete('/api/films/12/favourite');
@@ -152,30 +153,25 @@ class FavouriteTest extends TestCase
     /**
      * Test deleting a non-exsistent film from favourites
      */
-    public function test_delete_film_from_favourites_does_not_exist(): void
+    public function testDeleteFilmFromFavouritesDoesNotExist(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
-
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)->delete("/api/films/9999/favourite");
         $response->assertStatus(404);
+        $response->assertJson(['message' => 'Запрашиваемая страница не существует.']);
     }
 
     /**
      * Test deleting a film from favourites again
      */
-    public function test_delete_film_from_favourites_already_deleted(): void
+    public function testDeleteFilmFromFavouritesAlreadyDeleted(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(FilmSeeder::class);
+        $film = Film::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
-
-        $film = Film::first();
 
         $response = $this->actingAs($user)->delete("/api/films/{$film->id}/favourite");
 

@@ -2,14 +2,19 @@
 
 namespace App\Services\MovieService;
 
+use Override;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
 class MovieRepository implements MovieRepositoryInterface
 {
+    public function __construct(
+        private ClientInterface $httpClient,
+        private RequestFactoryInterface $requestFactory,
+    ) {
+    }
 
-
-    #[\Override]
+    #[Override]
     public function searchMovieById(string $imdbId): ?array
     {
         $request = $this->requestFactory->createRequest(

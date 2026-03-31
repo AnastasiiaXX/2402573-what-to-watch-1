@@ -32,8 +32,7 @@ class SyncCommentsJobTest extends TestCase
     public function testJobUpdatesDatabase(): void
     {
         $film = Film::factory()->create();
-        $this->mock(LoadCommentsInterface::class, function ($mock) use ($film)
-        {
+        $this->mock(LoadCommentsInterface::class, function ($mock) use ($film) {
             $mock->shouldReceive('getComments')
                 ->with($film->imdb_id)
                 ->andReturn([

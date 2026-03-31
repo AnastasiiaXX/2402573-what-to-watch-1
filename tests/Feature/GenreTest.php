@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use App\Models\Genre;
 use App\Models\Role;
 use App\Models\User;
-use Database\Seeders\GenreSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GenreTest extends TestCase
@@ -16,11 +14,24 @@ class GenreTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Prepares roles for users
+     *
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RoleSeeder::class);
+    }
+
+    /**
      * Test getting list of genres
      */
-    public function test_show_genres(): void
+    public function testShowGenres(): void
     {
-        $this->seed(GenreSeeder::class);
+        Genre::factory()->create();
+        Genre::factory()->create();
+        Genre::factory()->create();
+
         $response = $this->get('/api/genres');
 
         $response->assertStatus(200);
@@ -30,27 +41,24 @@ class GenreTest extends TestCase
     /**
      * Test updating a genre as a moderator
      */
-    public function test_update_genre_as_moderator(): void
+    public function testUpdateGenreAsModerator(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(GenreSeeder::class);
+        $genre = Genre::factory()->create();
 
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
-        $genre = Genre::first();
 
         $response = $this->actingAs($moderator)->patch("/api/genres/{$genre->id}", ['name' => 'newName']);
         $response->assertStatus(200);
-        $response->assertJsonStructure(['data' => ['id', 'name']]);
+        $this->assertDatabaseHas('genres', ['name' => 'newName']);
     }
 
     /**
      * Test updating a genre as a guest
      */
-    public function test_update_unauthorized(): void
+    public function testUpdateUnauthorized(): void
     {
-        $this->seed(GenreSeeder::class);
-        $genre = Genre::first();
+        $genre = Genre::factory()->create();
 
         $response = $this->patch("/api/genres/{$genre->id}", ['name' => 'newName']);
         $response->assertStatus(401);
@@ -60,11 +68,9 @@ class GenreTest extends TestCase
     /**
      * Test updating a genre as a user
      */
-    public function test_update_not_moderator(): void
+    public function testUpdateNotModerator(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(GenreSeeder::class);
-        $genre = Genre::first();
+        $genre = Genre::factory()->create();
 
         $role = Role::where('name', 'user')->first();
         $user = User::factory()->create(['role_id' => $role->id]);
@@ -73,20 +79,18 @@ class GenreTest extends TestCase
                             ->withHeaders(['Accept' => 'application/json'])
                             ->patch("/api/genres/{$genre->id}", ['name' => 'newName']);
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'This action is unauthorized.']);
+        $response->assertJson(['message' => 'Действие не разрешено.']);
     }
 
     /**
      * Test updating a genre with wrong data
      */
-    public function test_update_with_invalid_data(): void
+    public function testUpdateWithInvalidData(): void
     {
-        $this->seed(RoleSeeder::class);
-        $this->seed(GenreSeeder::class);
+        $genre = Genre::factory()->create();
 
         $role = Role::where('name', 'moderator')->first();
         $moderator = User::factory()->create(['role_id' => $role->id]);
-        $genre = Genre::first();
 
         $response = $this->actingAs($moderator)
             ->withHeaders(['Accept' => 'application/json'])

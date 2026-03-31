@@ -1,10 +1,12 @@
-final <?php
+<?php
 
 namespace App\Services\VideoStorageService;
 
+use Override;
+
 class LocalVideoService implements VideoServiceInterface
 {
-    #[\Override]
+    #[Override]
     public function getVideoUrl(?string $path): ?string
     {
         return $path;

@@ -12,8 +12,11 @@ use App\Services\VideoStorageService\LocalVideoService;
 use App\Services\VideoStorageService\VideoServiceInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
@@ -22,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    #[\Override]
+    #[Override]
     public function register(): void
     {
         $this->app->bind(MovieRepositoryInterface::class, MovieRepository::class);
@@ -51,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $user->id === $comment->user_id;
+        });
+
+        RateLimiter::for('movie-api', function () {
+            return Limit::perMinute(10);
         });
     }
 }
