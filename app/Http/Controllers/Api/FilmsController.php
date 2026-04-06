@@ -41,7 +41,11 @@ class FilmsController extends Controller
             $films = $films->whereAttachedTo($genreName);
         }
         $favouriteIds = $user ? $user->favoriteFilms()->pluck('film_id')->toArray() : [];
-        $films = $films->orderBy($sortRule, $sortOrder)->with('genres')->paginate(8);
+        $films = $films->withAvg('comments as rating_avg', 'rating')
+                        ->withCount('comments as scores_count')
+                        ->orderBy($sortRule, $sortOrder)
+                        ->with('genres')
+                        ->paginate(8);
         foreach ($films as $film) {
             $film->is_favourite = in_array($film->id, $favouriteIds);
         }
@@ -61,9 +65,15 @@ class FilmsController extends Controller
         if ($user) {
             $film->is_favourite = $user->favoriteFilms()->where('film_id', $film->id)->exists();
         }
+
+        $film->loadAvg('comments as rating_avg', 'rating')
+            ->loadCount('comments as scores_count')
+            ->load('genres');
+
         $film->video_link = $this->videoService->getVideoUrl($film->video_link);
         $film->preview_video_link = $this->videoService->getVideoUrl($film->preview_video_link);
-        return new SuccessResponse($film->load('genres'), 200);
+
+        return new SuccessResponse($film, 200);
     }
 
     /**
@@ -105,9 +115,17 @@ class FilmsController extends Controller
     {
         $genres = $film->genres;
         /** @var \Illuminate\Database\Eloquent\Collection $genres */
-        $similar = Film::whereAttachedTo($genres)->where('id', '!=', $film->id)
-                    ->limit(4)
-                    ->get();
+
+        if ($genres->isEmpty()) {
+            return new SuccessResponse(collect([]), 200);
+        }
+
+        $similar = Film::whereAttachedTo($genres)
+                        ->where('id', '!=', $film->id)
+                        ->withAvg('comments as rating_avg', 'rating')
+                        ->withCount('comments as scores_count')
+                        ->limit(4)
+                        ->get();
         return new SuccessResponse($similar, 200);
     }
 
@@ -126,10 +144,14 @@ class FilmsController extends Controller
             abort(404);
         }
 
+        $promo->loadAvg('comments as rating_avg', 'rating')
+            ->loadCount('comments as scores_count')
+            ->load('genres');
+
         $promo->video_link = $this->videoService->getVideoUrl($promo->video_link);
         $promo->preview_video_link = $this->videoService->getVideoUrl($promo->preview_video_link);
 
-        return new SuccessResponse($promo->load('genres'), 200);
+        return new SuccessResponse($promo, 200);
     }
 
     /**

@@ -102,7 +102,12 @@ class Film extends Model
     protected function rating(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->comments()->avg('rating'),
+            get: function () {
+                if (array_key_exists('rating_avg', $this->attributes)) {
+                    return (float)$this->attributes['rating_avg'];
+                }
+                return $this->comments()->avg('rating');
+            }
         );
     }
 
@@ -114,7 +119,12 @@ class Film extends Model
     protected function scoresCount(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->comments()->count(),
+            get: function () {
+                if (array_key_exists('scores_count', $this->attributes)) {
+                    return (int)$this->attributes['scores_count'];
+                }
+                return $this->comments()->count();
+            }
         );
     }
 }
