@@ -7,6 +7,7 @@ use App\Services\LoadCommentsService\LoadCommentsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 class SyncCommentsJob implements ShouldQueue
 {
@@ -29,5 +30,18 @@ class SyncCommentsJob implements ShouldQueue
     public function handle(LoadCommentsService $commentsService): void
     {
         $commentsService->syncComments($this->film);
+    }
+
+    /**
+     * Logs Job error
+     *
+     * @param Throwable $exception
+     * @return void
+     */
+    public function failed(Throwable $exception): void
+    {
+        \Log::error("SyncingJob failed for film {$this->film->id}", [
+            'error' => $exception->getMessage(),
+            ]);
     }
 }
