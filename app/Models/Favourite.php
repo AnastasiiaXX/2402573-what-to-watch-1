@@ -16,11 +16,17 @@ use Illuminate\Support\Carbon;
 **/
 class Favourite extends Model
 {
+    /**
+     * @return BelongsTo<Film>
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);
     }
 
+    /**
+     * @return BelongsTo<User>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

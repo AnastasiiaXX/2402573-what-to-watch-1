@@ -44,26 +44,41 @@ class Comment extends Model
 
     protected $appends = ['author_name'];
 
+    /**
+     * @return BelongsTo<User>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Film>
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);
     }
 
+    /**
+     * @return BelongsTo<Comment>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
     }
 
+    /**
+     * @return HasMany<Comment>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(Comment::class, 'parent_id');
     }
 
+    /**
+     * @return Attribute
+     */
     public function authorName(): Attribute
     {
         return Attribute::make(

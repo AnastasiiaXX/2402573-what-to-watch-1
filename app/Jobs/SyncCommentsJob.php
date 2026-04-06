@@ -15,6 +15,7 @@ class SyncCommentsJob implements ShouldQueue
 
     /**
      * Create a new job instance.
+     * @param Film $film
      */
     public function __construct(private Film $film)
     {
@@ -23,6 +24,7 @@ class SyncCommentsJob implements ShouldQueue
     /**
      * Execute the job.
      *
+     * @param LoadCommentsService $commentsService
      */
     public function handle(LoadCommentsService $commentsService): void
     {

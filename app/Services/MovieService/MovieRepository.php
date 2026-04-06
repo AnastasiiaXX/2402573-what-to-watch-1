@@ -3,17 +3,30 @@
 namespace App\Services\MovieService;
 
 use Override;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
 class MovieRepository implements MovieRepositoryInterface
 {
+    /**
+     * @param ClientInterface $httpClient
+     * @param RequestFactoryInterface $requestFactory
+     */
     public function __construct(
         private ClientInterface $httpClient,
         private RequestFactoryInterface $requestFactory,
     ) {
     }
 
+    /**
+     * Searches the movie in an external source
+     * and parses the incoming data
+     *
+     * @param string $imdbId
+     * @return array|null
+     * @throws ClientExceptionInterface
+     */
     #[Override]
     public function searchMovieById(string $imdbId): ?array
     {

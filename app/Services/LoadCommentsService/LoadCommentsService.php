@@ -7,10 +7,19 @@ use App\Models\Film;
 
 class LoadCommentsService
 {
+    /**
+     * @param LoadCommentsInterface $repository
+     */
     public function __construct(private LoadCommentsInterface $repository)
     {
     }
 
+    /**
+     * Inserts new comments into the database
+     *
+     * @param Film $film
+     * @return void
+     */
     public function syncComments(Film $film): void
     {
         $data = $this->repository->getComments($film->imdb_id);

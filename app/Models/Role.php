@@ -19,6 +19,7 @@ class Role extends Model
     use HasFactory;
 
     public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -28,6 +29,9 @@ class Role extends Model
         'name',
     ];
 
+    /**
+     * @return HasMany<User>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

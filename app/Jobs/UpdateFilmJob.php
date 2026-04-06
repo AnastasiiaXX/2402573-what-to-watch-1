@@ -15,6 +15,8 @@ class UpdateFilmJob implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param string $imdbId
      */
     public function __construct(private string $imdbId)
     {
@@ -22,6 +24,8 @@ class UpdateFilmJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @param MovieService $movieService
      */
     public function handle(MovieService $movieService): void
     {

@@ -3,17 +3,29 @@
 namespace App\Services\LoadCommentsService;
 
 use Override;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
 class CommentRepository implements LoadCommentsInterface
 {
+    /**
+     * @param ClientInterface $httpClient
+     * @param RequestFactoryInterface $requestFactory
+     */
     public function __construct(
         private ClientInterface $httpClient,
         private RequestFactoryInterface $requestFactory,
     ) {
     }
 
+    /**
+     * Gets comments from an external source
+     *
+     * @param string $imdbId
+     * @return array|null
+     * @throws ClientExceptionInterface
+     */
     #[Override]
     public function getComments(string $imdbId): ?array
     {

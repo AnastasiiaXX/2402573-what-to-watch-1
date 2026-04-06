@@ -43,6 +43,7 @@ class Film extends Model
 
     public $timestamps = false;
     public $appends = ['rating', 'scores_count'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -70,27 +71,46 @@ class Film extends Model
         'starring' => 'array',
     ];
 
+    /**
+     * @return HasMany<Comment>
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * @return BelongsToMany<Genre>
+     */
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class);
     }
 
+    /**
+     * @return HasMany<Favourite>
+     */
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class);
     }
 
+    /**
+     * Calculates a film rating
+     * @return Attribute
+     */
     protected function rating(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->comments()->avg('rating'),
         );
     }
+
+    /**
+     * Gets the number of reviews
+     *
+     * @return Attribute
+     */
     protected function scoresCount(): Attribute
     {
         return Attribute::make(

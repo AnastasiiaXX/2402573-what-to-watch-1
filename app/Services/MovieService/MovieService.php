@@ -8,15 +8,29 @@ use Illuminate\Support\Facades\Cache;
 
 class MovieService
 {
+    /**
+     * @param MovieRepositoryInterface $repository
+     */
     public function __construct(private MovieRepositoryInterface $repository)
     {
     }
 
+    /**
+     * @param string $imdbId
+     * @return array|null
+     */
     public function searchMovieById(string $imdbId): ?array
     {
         return $this->repository->searchMovieById($imdbId);
     }
 
+    /**
+     * Adds a new film and a genre attached to it
+     * if it does not exist yet
+     *
+     * @param string $imdbId
+     * @return void
+     */
     public function updateFilmInfo(string $imdbId): void
     {
         $data = $this->repository->searchMovieById($imdbId);

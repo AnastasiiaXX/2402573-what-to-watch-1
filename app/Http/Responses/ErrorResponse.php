@@ -11,6 +11,11 @@ class ErrorResponse extends BaseResponse
     public string $message;
     public mixed $errors;
 
+    /**
+     * @param int $responseCode
+     * @param string $message
+     * @param mixed|null $errors
+     */
     public function __construct(int $responseCode, string $message, mixed $errors = null)
     {
         $this->responseCode = $responseCode;
@@ -18,6 +23,10 @@ class ErrorResponse extends BaseResponse
         $this->errors = $errors;
     }
 
+    /**
+     * @param $request
+     * @return Response
+     */
     #[Override]
     public function toResponse($request): Response
     {

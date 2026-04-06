@@ -76,7 +76,6 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-
     #[Override]
     protected function casts(): array
     {
@@ -86,16 +85,28 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * @return HasMany<Comment>
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * @return HasMany<Favourite>
+     */
     public function favorites(): HasMany
     {
         return $this->hasMany(Favourite::class);
     }
 
+    /**
+     * Gets films added to favourites and sorts them
+     * by date
+     *
+     * @return BelongsToMany<Film>
+     */
     public function favoriteFilms(): BelongsToMany
     {
         return $this->belongsToMany(Film::class, 'favourites')
@@ -103,11 +114,19 @@ class User extends Authenticatable
             ->orderByPivot('created_at', 'desc');
     }
 
+    /**
+     * Checks if a user has a role moderator
+     *
+     * @return bool
+     */
     public function isModerator(): bool
     {
         return $this->role->name === 'moderator';
     }
 
+    /**
+     * @return BelongsTo<Role>
+     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
